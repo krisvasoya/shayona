@@ -12,7 +12,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// Production-ready CORS setup
 app.use(
   cors({
     origin: '*',
@@ -22,14 +22,18 @@ app.use(
 );
 app.use(express.json());
 
-// Health Check
+// Render.com Health Check Endpoint
+app.get('/health', (_req: Request, res: Response) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Root API Info
 app.get('/', (_req: Request, res: Response) => {
   res.json({
     status: 'online',
     app: 'Invoice Bill Maker API (Zero-Cost, No GST)',
-    version: '3.0.0',
-    increment: 3,
-    time: new Date().toISOString(),
+    version: '1.0.0',
+    environment: process.env.NODE_ENV || 'development',
   });
 });
 
@@ -42,16 +46,18 @@ app.use('/api/v1/shop', settingsRoutes);
 
 // Global Error Handler
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-  console.error('Unhandled server error:', err);
-  res.status(500).json({
-    error: err.message || 'Internal Server Error',
-  });
+  const statusCode = err.status || 500;
+  const message = err.message || 'Internal Server Error';
+  if (process.env.NODE_ENV !== 'production') {
+    console.error('Server Error:', message);
+  }
+  res.status(statusCode).json({ error: message });
 });
 
 // Start Server
 app.listen(PORT, () => {
-  console.log(`🚀 Backend server running on http://localhost:${PORT}`);
-  console.log(`📡 Endpoints: /customers, /buyers, /invoices, /dashboard, /shop`);
+  console.log(`🚀 Production server running on port ${PORT}`);
+  console.log(`🩺 Health check active on /health`);
 });
 
 export default app;
