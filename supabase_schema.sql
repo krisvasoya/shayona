@@ -76,6 +76,28 @@ CREATE TABLE IF NOT EXISTS public.payments (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- APP CONFIG TABLE (For OTA Updates & Global App Settings)
+CREATE TABLE IF NOT EXISTS public.app_config (
+    key TEXT PRIMARY KEY,
+    value JSONB NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Enable RLS for app_config (Public read-only)
+ALTER TABLE public.app_config ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public read access to app_config"
+    ON public.app_config FOR SELECT
+    USING (true);
+
+-- Insert initial version record
+INSERT INTO public.app_config (key, value)
+VALUES (
+    'version',
+    '{"version": "1.0.0", "changelog": "Initial Production Release with zero GST, full invoices, Baki/Jama calculations, Dark/Light theme, and multi-language support.", "downloadUrl": ""}'::jsonb
+)
+ON CONFLICT (key) DO NOTHING;
+
 -- INDEXES for 3-year performance
 CREATE INDEX IF NOT EXISTS idx_invoices_user_date ON public.invoices(user_id, invoice_date DESC);
 CREATE INDEX IF NOT EXISTS idx_invoices_party ON public.invoices(party_id);

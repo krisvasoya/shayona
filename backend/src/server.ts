@@ -6,6 +6,7 @@ import buyerRoutes from './routes/buyerRoutes';
 import invoiceRoutes from './routes/invoiceRoutes';
 import dashboardRoutes from './routes/dashboardRoutes';
 import settingsRoutes from './routes/settingsRoutes';
+import versionRoutes from './routes/versionRoutes';
 
 dotenv.config();
 
@@ -43,6 +44,7 @@ app.use('/api/v1/buyers', buyerRoutes);
 app.use('/api/v1/invoices', invoiceRoutes);
 app.use('/api/v1/dashboard', dashboardRoutes);
 app.use('/api/v1/shop', settingsRoutes);
+app.use('/api/v1/version', versionRoutes);
 
 // Global Error Handler
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

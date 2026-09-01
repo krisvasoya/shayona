@@ -121,6 +121,7 @@ export type MainTabParamList = {
   DashboardTab: undefined;
   CustomersTab: undefined;
   BuyersTab: undefined;
+  SettingsTab: undefined;
 };
 
 export type DashboardStackParamList = {

@@ -5,9 +5,11 @@ import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { DashboardScreen } from '../screens/main/DashboardScreen';
 import { CustomersScreen } from '../screens/main/CustomersScreen';
 import { BuyersScreen } from '../screens/main/BuyersScreen';
+import { SettingsScreen } from '../screens/main/SettingsScreen';
 import { CustomerDetailScreen } from '../screens/details/CustomerDetailScreen';
 import { BuyerDetailScreen } from '../screens/details/BuyerDetailScreen';
 import { CreateEditInvoiceScreen } from '../screens/invoices/CreateEditInvoiceScreen';
@@ -66,17 +68,18 @@ const BuyersStack: React.FC = () => {
 // Main Tabs Navigator
 const MainTabs: React.FC = () => {
   const { t } = useTranslation();
+  const { colors } = useTheme();
 
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: '#2563EB',
-        tabBarInactiveTintColor: '#94A3B8',
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textSecondary,
         tabBarStyle: {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: colors.card,
           borderTopWidth: 1,
-          borderTopColor: '#E2E8F0',
+          borderTopColor: colors.border,
           height: 60,
           paddingBottom: 8,
           paddingTop: 6,
@@ -94,6 +97,8 @@ const MainTabs: React.FC = () => {
             iconName = focused ? 'people' : 'people-outline';
           } else if (route.name === 'BuyersTab') {
             iconName = focused ? 'cart' : 'cart-outline';
+          } else if (route.name === 'SettingsTab') {
+            iconName = focused ? 'settings' : 'settings-outline';
           }
 
           return <Ionicons name={iconName} size={size || 22} color={color} />;
@@ -103,17 +108,22 @@ const MainTabs: React.FC = () => {
       <Tab.Screen
         name="DashboardTab"
         component={DashboardStack}
-        options={{ tabBarLabel: t('dashboard') }}
+        options={{ tabBarLabel: t('dashboard') || 'Dashboard' }}
       />
       <Tab.Screen
         name="CustomersTab"
         component={CustomersStack}
-        options={{ tabBarLabel: t('customers') }}
+        options={{ tabBarLabel: t('customers') || 'Customers' }}
       />
       <Tab.Screen
         name="BuyersTab"
         component={BuyersStack}
-        options={{ tabBarLabel: t('buyers') }}
+        options={{ tabBarLabel: t('buyers') || 'Buyers' }}
+      />
+      <Tab.Screen
+        name="SettingsTab"
+        component={SettingsScreen}
+        options={{ tabBarLabel: t('settings') || 'Settings' }}
       />
     </Tab.Navigator>
   );
@@ -121,11 +131,12 @@ const MainTabs: React.FC = () => {
 
 export const AppNavigator: React.FC = () => {
   const { user, isLoading } = useAuth();
+  const { colors } = useTheme();
 
   if (isLoading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#2563EB" />
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
@@ -146,6 +157,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
   },
 });
