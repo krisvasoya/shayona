@@ -1,6 +1,5 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
 interface Props {
   children: ReactNode;
@@ -37,15 +36,14 @@ export class ErrorBoundary extends Component<Props, State> {
         <SafeAreaView style={styles.container}>
           <View style={styles.card}>
             <View style={styles.iconBadge}>
-              <Ionicons name="alert-circle" size={48} color="#DC2626" />
+              <Text style={styles.iconBadgeText}>!</Text>
             </View>
             <Text style={styles.title}>Something went wrong</Text>
             <Text style={styles.message}>
-              An unexpected error occurred. Please restart the app or tap retry below.
+              {this.state.error?.message || 'An unexpected error occurred. Please tap refresh below.'}
             </Text>
             <TouchableOpacity style={styles.retryButton} onPress={this.handleReset}>
-              <Ionicons name="refresh" size={18} color="#FFFFFF" />
-              <Text style={styles.retryButtonText}>Retry / Refresh</Text>
+              <Text style={styles.retryButtonText}>Refresh App</Text>
             </TouchableOpacity>
           </View>
         </SafeAreaView>
@@ -81,12 +79,17 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   iconBadge: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     backgroundColor: '#FEE2E2',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  iconBadgeText: {
+    fontSize: 32,
+    fontWeight: '800',
+    color: '#DC2626',
   },
   title: {
     fontSize: 18,
@@ -101,14 +104,12 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   retryButton: {
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#2563EB',
     paddingHorizontal: 20,
     height: 44,
     borderRadius: 8,
-    gap: 8,
     marginTop: 8,
     width: '100%',
   },
