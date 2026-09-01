@@ -1,5 +1,3 @@
-import * as FileSystem from 'expo-file-system';
-import * as IntentLauncher from 'expo-intent-launcher';
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 import { api } from './api';
@@ -31,6 +29,7 @@ export const checkForUpdate = async (): Promise<VersionInfo | null> => {
 
 /**
  * Downloads the APK and launches the Android native package installer
+ * Safely loads FileSystem and IntentLauncher on demand.
  */
 export const downloadAndInstall = async (
   downloadUrl: string,
@@ -40,34 +39,41 @@ export const downloadAndInstall = async (
     throw new Error('No APK download URL provided.');
   }
 
-  const baseDir = (FileSystem as any).documentDirectory || (FileSystem as any).cacheDirectory || '';
-  const fileUri = `${baseDir}update_${Date.now()}.apk`;
+  try {
+    const FileSystem = require('expo-file-system');
+    const IntentLauncher = require('expo-intent-launcher');
 
-  const downloadResumable = FileSystem.createDownloadResumable(
-    downloadUrl,
-    fileUri,
-    {},
-    (downloadProgress) => {
-      if (downloadProgress.totalBytesExpectedToWrite > 0) {
-        const progress =
-          downloadProgress.totalBytesWritten /
-          downloadProgress.totalBytesExpectedToWrite;
-        onProgress?.(progress);
-      }
-    }
-  );
+    const baseDir = FileSystem.documentDirectory || FileSystem.cacheDirectory || '';
+    const fileUri = `${baseDir}update_${Date.now()}.apk`;
 
-  const result = await downloadResumable.downloadAsync();
-  if (result && Platform.OS === 'android') {
-    // Generate content URI for Android 7.0+ intent package archive installation
-    const cUri = await FileSystem.getContentUriAsync(result.uri);
-    await IntentLauncher.startActivityAsync(
-      'android.intent.action.VIEW',
-      {
-        data: cUri,
-        type: 'application/vnd.android.package-archive',
-        flags: 1, // FLAG_GRANT_READ_URI_PERMISSION
+    const downloadResumable = FileSystem.createDownloadResumable(
+      downloadUrl,
+      fileUri,
+      {},
+      (downloadProgress: any) => {
+        if (downloadProgress.totalBytesExpectedToWrite > 0) {
+          const progress =
+            downloadProgress.totalBytesWritten /
+            downloadProgress.totalBytesExpectedToWrite;
+          onProgress?.(progress);
+        }
       }
     );
+
+    const result = await downloadResumable.downloadAsync();
+    if (result && Platform.OS === 'android') {
+      const cUri = await FileSystem.getContentUriAsync(result.uri);
+      await IntentLauncher.startActivityAsync(
+        'android.intent.action.VIEW',
+        {
+          data: cUri,
+          type: 'application/vnd.android.package-archive',
+          flags: 1, // FLAG_GRANT_READ_URI_PERMISSION
+        }
+      );
+    }
+  } catch (error: any) {
+    console.warn('downloadAndInstall error:', error);
+    throw new Error(error?.message || 'Failed to install update package.');
   }
 };
