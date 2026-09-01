@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "Invoice Bill Maker",
+    "slug": "invoice-bill-maker",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#2563EB"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#2563EB"
+      },
+      "package": "com.shayona.invoicemaker"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "@react-native-google-signin/google-signin"
+    ]
+  }
+}
