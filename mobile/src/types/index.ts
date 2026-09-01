@@ -108,6 +108,10 @@ export interface BuyerDetailData {
 }
 
 // Navigation types
+export type AuthStackParamList = {
+  Login: undefined;
+};
+
 export type RootStackParamList = {
   Auth: undefined;
   Main: undefined;
