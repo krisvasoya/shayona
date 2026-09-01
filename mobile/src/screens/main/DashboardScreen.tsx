@@ -20,6 +20,8 @@ import { getDashboardStats, getInvoices } from '../../services/api';
 import { DashboardStats, Invoice } from '../../types';
 import { changeAppLanguage } from '../../i18n';
 
+import { useTheme } from '../../context/ThemeContext';
+
 interface DashboardScreenProps {
   navigation: any;
 }
@@ -29,6 +31,7 @@ type PeriodFilter = 'today' | 'week' | 'month' | 'year' | 'custom';
 export const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) => {
   const { t, i18n } = useTranslation();
   const { user, logout } = useAuth();
+  const { isDark, mode, setMode, colors } = useTheme();
 
   const [stats, setStats] = useState<DashboardStats>({
     totalInvoices: 0,
@@ -123,6 +126,11 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) 
     setLanguageModalVisible(false);
   };
 
+  const toggleTheme = () => {
+    const nextMode = mode === 'light' ? 'dark' : mode === 'dark' ? 'system' : 'light';
+    setMode(nextMode);
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'paid':
@@ -137,11 +145,11 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) 
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={colors.card} />
 
       {/* Header Bar */}
-      <View style={styles.topHeader}>
+      <View style={[styles.topHeader, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
         <TouchableOpacity
           style={styles.headerIconButton}
           onPress={handleLogout}
@@ -151,19 +159,33 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) 
         </TouchableOpacity>
 
         <View style={styles.headerCenter}>
-          <Text style={styles.headerShopName} numberOfLines={1}>
+          <Text style={[styles.headerShopName, { color: colors.text }]} numberOfLines={1}>
             {user?.displayName || 'Shayona Retail Store'}
           </Text>
-          <Text style={styles.headerSubtitle}>{t('tagline')}</Text>
+          <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>{t('tagline')}</Text>
         </View>
 
-        <TouchableOpacity
-          style={styles.headerIconButton}
-          onPress={() => setLanguageModalVisible(true)}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <Ionicons name="globe-outline" size={22} color="#2563EB" />
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+          <TouchableOpacity
+            style={styles.headerIconButton}
+            onPress={toggleTheme}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Ionicons
+              name={mode === 'dark' ? 'moon' : mode === 'light' ? 'sunny' : 'contrast-outline'}
+              size={20}
+              color={colors.primary}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.headerIconButton}
+            onPress={() => setLanguageModalVisible(true)}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Ionicons name="globe-outline" size={22} color={colors.primary} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView

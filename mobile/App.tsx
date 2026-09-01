@@ -5,8 +5,20 @@ import { NavigationContainer } from '@react-navigation/native';
 import './src/i18n';
 import { loadSavedLanguage } from './src/i18n';
 import { AuthProvider } from './src/context/AuthContext';
+import { ThemeProvider, useTheme } from './src/context/ThemeContext';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { ErrorBoundary } from './src/components/common/ErrorBoundary';
+
+function MainApp() {
+  const { isDark } = useTheme();
+
+  return (
+    <NavigationContainer>
+      <StatusBar style={isDark ? 'light' : 'dark'} />
+      <AppNavigator />
+    </NavigationContainer>
+  );
+}
 
 export default function App() {
   useEffect(() => {
@@ -16,12 +28,11 @@ export default function App() {
   return (
     <ErrorBoundary>
       <SafeAreaProvider>
-        <AuthProvider>
-          <NavigationContainer>
-            <StatusBar style="dark" />
-            <AppNavigator />
-          </NavigationContainer>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <MainApp />
+          </AuthProvider>
+        </ThemeProvider>
       </SafeAreaProvider>
     </ErrorBoundary>
   );
