@@ -1,10 +1,30 @@
-/**
- * Centralized Application Environment Configuration
- * Reads from EXPO_PUBLIC_* environment variables or falls back to configured defaults.
- */
+import Constants from 'expo-constants';
+import { Platform } from 'react-native';
 
-export const API_URL: string =
-  process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+/**
+ * Dynamically resolves the computer's backend API URL:
+ * - If running on a real phone via Expo Go, resolves the host IP automatically.
+ * - If Android emulator, connects via 10.0.2.2 or direct Wi-Fi IP (10.120.194.9).
+ */
+const getDynamicApiUrl = (): string => {
+  if (process.env.EXPO_PUBLIC_API_URL) {
+    return process.env.EXPO_PUBLIC_API_URL;
+  }
+
+  const hostUri = Constants.expoConfig?.hostUri;
+  if (hostUri) {
+    const ip = hostUri.split(':')[0];
+    return `http://${ip}:5000/api/v1`;
+  }
+
+  if (Platform.OS === 'android') {
+    return 'http://10.120.194.9:5000/api/v1';
+  }
+
+  return 'http://localhost:5000/api/v1';
+};
+
+export const API_URL: string = getDynamicApiUrl();
 
 export const FIREBASE_WEB_CLIENT_ID: string =
   process.env.EXPO_PUBLIC_FIREBASE_WEB_CLIENT_ID ||
