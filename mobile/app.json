@@ -4,7 +4,6 @@
     "slug": "invoice-bill-maker",
     "version": "1.0.0",
     "orientation": "portrait",
-    "newArchEnabled": true,
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -31,6 +30,11 @@
     },
     "web": {
       "favicon": "./assets/icon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "bbdc74e3-b62b-4e25-b591-e3698ec572c3"
+      }
     }
   }
 }
