@@ -12,12 +12,17 @@ import {
   StatusBar,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { api } from '../../services/api';
 import { Buyer } from '../../types';
 import { CustomerForm } from '../../components/forms/CustomerForm';
-import { t } from '../../constants/strings';
 
-export const BuyersScreen: React.FC = () => {
+interface BuyersScreenProps {
+  navigation: any;
+}
+
+export const BuyersScreen: React.FC<BuyersScreenProps> = ({ navigation }) => {
+  const { t } = useTranslation();
   const [buyers, setBuyers] = useState<Buyer[]>([]);
   const [filteredBuyers, setFilteredBuyers] = useState<Buyer[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -81,7 +86,16 @@ export const BuyersScreen: React.FC = () => {
 
   const renderItem = ({ item }: { item: Buyer }) => {
     return (
-      <View style={styles.card}>
+      <TouchableOpacity
+        style={styles.card}
+        activeOpacity={0.7}
+        onPress={() =>
+          navigation.navigate('BuyerDetail', {
+            buyerId: item.id,
+            name: item.name,
+          })
+        }
+      >
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>
             {item.name ? item.name.charAt(0).toUpperCase() : 'B'}
@@ -105,18 +119,20 @@ export const BuyersScreen: React.FC = () => {
             </View>
           ) : null}
         </View>
-      </View>
+
+        <Ionicons name="chevron-forward" size={18} color="#CBD5E1" />
+      </TouchableOpacity>
     );
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#F8FAFC" />
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
       {/* Header & Search */}
       <View style={styles.header}>
         <View style={styles.titleRow}>
-          <Text style={styles.title}>{t.buyers}</Text>
+          <Text style={styles.title}>{t('buyers')}</Text>
           <View style={styles.countBadge}>
             <Text style={styles.countText}>{buyers.length}</Text>
           </View>
@@ -126,7 +142,7 @@ export const BuyersScreen: React.FC = () => {
           <Ionicons name="search-outline" size={18} color="#94A3B8" />
           <TextInput
             style={styles.searchInput}
-            placeholder={t.searchPlaceholder}
+            placeholder={t('searchPlaceholder')}
             placeholderTextColor="#94A3B8"
             value={searchQuery}
             onChangeText={handleSearch}
@@ -143,7 +159,7 @@ export const BuyersScreen: React.FC = () => {
       {loading ? (
         <View style={styles.centerContainer}>
           <ActivityIndicator size="large" color="#7C3AED" />
-          <Text style={styles.loadingText}>{t.loading}</Text>
+          <Text style={styles.loadingText}>{t('loading')}</Text>
         </View>
       ) : (
         <FlatList
@@ -167,12 +183,10 @@ export const BuyersScreen: React.FC = () => {
                 <Ionicons name="cart-outline" size={40} color="#94A3B8" />
               </View>
               <Text style={styles.emptyTitle}>
-                {searchQuery ? 'No matching buyers' : t.noBuyersTitle}
+                {searchQuery ? 'No matching buyers' : 'No Buyers Yet'}
               </Text>
               <Text style={styles.emptyDesc}>
-                {searchQuery
-                  ? 'Try searching with a different name or phone number.'
-                  : t.noBuyersDesc}
+                Tap the + button below to add your first supplier or buyer.
               </Text>
             </View>
           }

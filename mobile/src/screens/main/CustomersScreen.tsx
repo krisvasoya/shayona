@@ -12,12 +12,17 @@ import {
   StatusBar,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { api } from '../../services/api';
 import { Customer } from '../../types';
 import { CustomerForm } from '../../components/forms/CustomerForm';
-import { t } from '../../constants/strings';
 
-export const CustomersScreen: React.FC = () => {
+interface CustomersScreenProps {
+  navigation: any;
+}
+
+export const CustomersScreen: React.FC<CustomersScreenProps> = ({ navigation }) => {
+  const { t } = useTranslation();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -81,7 +86,16 @@ export const CustomersScreen: React.FC = () => {
 
   const renderItem = ({ item }: { item: Customer }) => {
     return (
-      <View style={styles.card}>
+      <TouchableOpacity
+        style={styles.card}
+        activeOpacity={0.7}
+        onPress={() =>
+          navigation.navigate('CustomerDetail', {
+            customerId: item.id,
+            name: item.name,
+          })
+        }
+      >
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>
             {item.name ? item.name.charAt(0).toUpperCase() : 'C'}
@@ -105,18 +119,20 @@ export const CustomersScreen: React.FC = () => {
             </View>
           ) : null}
         </View>
-      </View>
+
+        <Ionicons name="chevron-forward" size={18} color="#CBD5E1" />
+      </TouchableOpacity>
     );
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#F8FAFC" />
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
       {/* Header & Search */}
       <View style={styles.header}>
         <View style={styles.titleRow}>
-          <Text style={styles.title}>{t.customers}</Text>
+          <Text style={styles.title}>{t('customers')}</Text>
           <View style={styles.countBadge}>
             <Text style={styles.countText}>{customers.length}</Text>
           </View>
@@ -126,7 +142,7 @@ export const CustomersScreen: React.FC = () => {
           <Ionicons name="search-outline" size={18} color="#94A3B8" />
           <TextInput
             style={styles.searchInput}
-            placeholder={t.searchPlaceholder}
+            placeholder={t('searchPlaceholder')}
             placeholderTextColor="#94A3B8"
             value={searchQuery}
             onChangeText={handleSearch}
@@ -143,7 +159,7 @@ export const CustomersScreen: React.FC = () => {
       {loading ? (
         <View style={styles.centerContainer}>
           <ActivityIndicator size="large" color="#2563EB" />
-          <Text style={styles.loadingText}>{t.loading}</Text>
+          <Text style={styles.loadingText}>{t('loading')}</Text>
         </View>
       ) : (
         <FlatList
@@ -167,12 +183,10 @@ export const CustomersScreen: React.FC = () => {
                 <Ionicons name="people-outline" size={40} color="#94A3B8" />
               </View>
               <Text style={styles.emptyTitle}>
-                {searchQuery ? 'No matching customers' : t.noCustomersTitle}
+                {searchQuery ? 'No matching customers' : 'No Customers Yet'}
               </Text>
               <Text style={styles.emptyDesc}>
-                {searchQuery
-                  ? 'Try searching with a different name or phone number.'
-                  : t.noCustomersDesc}
+                Tap the + button below to add your first customer.
               </Text>
             </View>
           }

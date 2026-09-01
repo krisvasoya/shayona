@@ -1,5 +1,13 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  DashboardStats,
+  CustomerDetailData,
+  BuyerDetailData,
+  Invoice,
+  ShopProfile,
+  Payment,
+} from '../types';
 
 const baseURL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
@@ -43,5 +51,38 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// ----------------------------------------------------------------------
+// Dedicated API Helper Functions
+// ----------------------------------------------------------------------
+
+export const getDashboardStats = (startDate?: string, endDate?: string) =>
+  api.get<DashboardStats>('/dashboard/stats', {
+    params: { startDate, endDate },
+  });
+
+export const getCustomerDetail = (id: number | string) =>
+  api.get<CustomerDetailData>(`/customers/${id}/detail`);
+
+export const getBuyerDetail = (id: number | string) =>
+  api.get<BuyerDetailData>(`/buyers/${id}/detail`);
+
+export const getInvoices = (limit?: number) =>
+  api.get<Invoice[]>('/invoices', { params: { limit } });
+
+export const getInvoice = (id: number | string) =>
+  api.get<Invoice>(`/invoices/${id}`);
+
+export const createInvoice = (data: any) =>
+  api.post<Invoice>('/invoices', data);
+
+export const updateInvoice = (id: number | string, data: any) =>
+  api.put<Invoice>(`/invoices/${id}`, data);
+
+export const recordPayment = (id: number | string, paymentData: any) =>
+  api.post<{ payment: Payment; invoice: Invoice }>(`/invoices/${id}/payments`, paymentData);
+
+export const getShopProfile = () =>
+  api.get<ShopProfile>('/shop/profile');
 
 export default api;

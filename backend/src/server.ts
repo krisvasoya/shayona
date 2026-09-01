@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import customerRoutes from './routes/customerRoutes';
 import buyerRoutes from './routes/buyerRoutes';
 import invoiceRoutes from './routes/invoiceRoutes';
+import dashboardRoutes from './routes/dashboardRoutes';
+import settingsRoutes from './routes/settingsRoutes';
 
 dotenv.config();
 
@@ -25,8 +27,8 @@ app.get('/', (_req: Request, res: Response) => {
   res.json({
     status: 'online',
     app: 'Invoice Bill Maker API (Zero-Cost, No GST)',
-    version: '1.0.0',
-    increment: 1,
+    version: '3.0.0',
+    increment: 3,
     time: new Date().toISOString(),
   });
 });
@@ -35,6 +37,8 @@ app.get('/', (_req: Request, res: Response) => {
 app.use('/api/v1/customers', customerRoutes);
 app.use('/api/v1/buyers', buyerRoutes);
 app.use('/api/v1/invoices', invoiceRoutes);
+app.use('/api/v1/dashboard', dashboardRoutes);
+app.use('/api/v1/shop', settingsRoutes);
 
 // Global Error Handler
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
@@ -46,8 +50,8 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
 
 // Start Server
 app.listen(PORT, () => {
-  console.log(`🚀 Backend server is running on http://localhost:${PORT}`);
-  console.log(`📡 Ready to accept requests on /api/v1/customers, /api/v1/buyers, /api/v1/invoices`);
+  console.log(`🚀 Backend server running on http://localhost:${PORT}`);
+  console.log(`📡 Endpoints: /customers, /buyers, /invoices, /dashboard, /shop`);
 });
 
 export default app;
