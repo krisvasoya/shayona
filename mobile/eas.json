@@ -9,6 +9,7 @@
         "buildType": "apk"
       },
       "env": {
+        "EXPO_PUBLIC_API_URL": "http://10.120.194.9:5000/api/v1",
         "EXPO_PUBLIC_SUPABASE_URL": "https://aesebdzwurpisuqfmksw.supabase.co",
         "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_kivY5kK4AFm15bQdxW1hlQ_5DfcLXoS",
         "EXPO_PUBLIC_FIREBASE_WEB_CLIENT_ID": "713022518840-rou6qgol3r8kpoqaojh2r35sq2g8bdfn.apps.googleusercontent.com"
@@ -19,6 +20,7 @@
         "buildType": "apk"
       },
       "env": {
+        "EXPO_PUBLIC_API_URL": "http://10.120.194.9:5000/api/v1",
         "EXPO_PUBLIC_SUPABASE_URL": "https://aesebdzwurpisuqfmksw.supabase.co",
         "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_kivY5kK4AFm15bQdxW1hlQ_5DfcLXoS",
         "EXPO_PUBLIC_FIREBASE_WEB_CLIENT_ID": "713022518840-rou6qgol3r8kpoqaojh2r35sq2g8bdfn.apps.googleusercontent.com"
